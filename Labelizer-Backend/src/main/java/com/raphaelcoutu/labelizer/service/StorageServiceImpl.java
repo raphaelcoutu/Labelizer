@@ -1,14 +1,16 @@
 package com.raphaelcoutu.labelizer.service;
 
-import net.coobird.thumbnailator.Thumbnailator;
 import net.coobird.thumbnailator.Thumbnails;
+import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -34,12 +36,16 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public void save(MultipartFile file, String filename, String extension) {
         try {
-            Files.copy(file.getInputStream(), this.root.resolve(filename + "." + extension));
-            Thumbnails.of(file.getInputStream())
+            InputStream fileInputStream = file.getInputStream();
+
+            Files.copy(fileInputStream, this.root.resolve(filename + "." + extension));
+            Thumbnails.of(fileInputStream)
                     .size(192, 108)
                     .outputFormat("jpg")
                     .outputQuality(1)
                     .toFile("uploads/" + filename + "_thumb");
+
+            fileInputStream.close();
         } catch (Exception e) {
             throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
         }
@@ -59,6 +65,11 @@ public class StorageServiceImpl implements StorageService {
         } catch (MalformedURLException e) {
             throw new RuntimeException("Error: " + e.getMessage());
         }
+    }
+
+    @Override
+    public void delete(String filename) throws IOException {
+        FileUtils.forceDelete(root.resolve(filename).toFile());
     }
 
     @Override
