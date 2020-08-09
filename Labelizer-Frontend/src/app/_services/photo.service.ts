@@ -38,4 +38,8 @@ export class PhotoService {
     return this.http.put<Photo>(`${this.baseUrl}/photos/${id}`, photo);
   }
 
+  delete(id: number) {
+    return this.http.delete<Photo>(`${this.baseUrl}/photos/${id}`);
+  }
+
 }

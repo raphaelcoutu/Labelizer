@@ -11,6 +11,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { concatMap } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { confirm } from 'devextreme/ui/dialog';
 
 @Component({
   selector: 'app-labelizer',
@@ -162,6 +163,22 @@ export class LabelizerComponent implements OnInit {
       },
       error => alert('Error!')
     )
+  }
+
+  deletePhoto() {
+    let result = confirm("<i>Voulez-vous vraiment supprimer cette photo?</i>", "Supprimer photo");
+    result.then((confirmDelete) => {
+      if (confirmDelete) {
+        this.photoService.delete(this.photo.id).subscribe(
+          success => {
+            this.router.navigate(['/datasets', this.photo.dataset.id]);
+          },
+          error => {
+            // TODO: Gérer une erreur de suppression
+          }
+        )
+      }
+    })
   }
 
   drawTempBox() {
