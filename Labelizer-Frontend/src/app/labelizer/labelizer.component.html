@@ -1,0 +1,57 @@
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-md-10 d-flex align-items-center">
+      <dx-button (click)="clearBoxes()">Clear Boxes</dx-button>
+      <dx-select-box class="ml-2"
+        [dataSource]="[{ value:50, text: '50%' }, { value:75, text: '75%' }, { value:100, text: '100%' }, { value:150, text: '150%' }]"
+        [value]="scale" valueExpr="value" displayExpr="text" (onValueChanged)="onScaleChange($event)"></dx-select-box>
+      <label class="ml-2 my-0">
+        <input type="radio" value="SELECT" [(ngModel)]="mode"> Select
+      </label>
+      <label class="ml-2 my-0">
+        <input type="radio" value="DRAW" [(ngModel)]="mode"> Draw
+      </label>
+      <div class="ml-2">
+        {{ position }}
+      </div>
+    </div>
+  </div>
+  <div class="row">
+    <div id="canvas-container" class="col-md-10 overflow-auto">
+      <canvas #canvas id="canvas" (mousedown)="onMouseDown($event)" (mouseup)="onMouseUp($event)"
+        (mousemove)="onMouseMove($event)"></canvas>
+    </div>
+    <div class="col-md-2">
+      <div>
+        <a *ngIf="photo" [routerLink]="['/datasets', photo.dataset.id]">Dataset</a>
+    </div>
+      <div>
+        <dx-button (click)="false" type="default" (click)="save()">Sauvegarder</dx-button>
+        <dx-button (click)="false" type="default" class="ml-2" (click)="saveAndVerify()">Terminer</dx-button>
+      </div>
+      <div>
+        <p class="badge badge-success" *ngIf="photo?.verified" (click)="photo.verified = ! photo?.verified">Vérifiée</p>
+        <p class="badge badge-success" *ngIf="!photo?.verified" (click)="photo.verified = ! photo?.verified">Non vérifiée</p>
+      </div>
+      <hr>
+
+      <span>Étiquette:</span>
+      <dx-select-box #labelSelectBox [dataSource]="labels" [(value)]="selectedLabel"
+        displayExpr="name" [searchEnabled]="true"
+        (onFocusIn)="onLabelSelectBoxFocusIn($event)" (onFocusOut)="keyEventDisabled = false">
+      </dx-select-box>
+
+      <div class="card mt-2">
+        <div class="card-header">Étiquettes</div>
+        <ul class="list-group list-group-flush">
+          <div *ngIf="photo?.labelBoxes.length == 0">
+            <li class="list-group-item">Aucune box</li>
+          </div>
+          <li class="list-group-item" *ngFor="let box of photo?.labelBoxes">
+            <span [class]="selectedBox == box ? 'text-success': 'text-danger'">{{ box.label.name }}
+              ({{ box.width }}x{{box.height}}) <a (click)="deleteBox(box)">Suppr</a></span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>

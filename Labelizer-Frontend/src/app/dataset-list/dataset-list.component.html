@@ -1,0 +1,13 @@
+<div class="container">
+  <dx-data-grid [dataSource]="datasets">
+    <dxi-column dataField="name" caption="Nom du dataset"></dxi-column>
+    <dxi-column caption="Actions" cellTemplate="actionTemplate"></dxi-column>
+
+    <div *dxTemplate="let d of 'actionTemplate'">
+      <a [routerLink]="d.data.id">Visualiser</a>
+    </div>
+
+    <dxo-paging [pageSize]="10"></dxo-paging>
+    <dxo-pager [showPageSizeSelector]="false" [showInfo]="true"></dxo-pager>
+  </dx-data-grid>
+</div>

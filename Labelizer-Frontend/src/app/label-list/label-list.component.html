@@ -1,0 +1,25 @@
+<div class="container">
+  <h4>Étiquettes</h4>
+  <dx-button text="Ajouter" type="default" (click)="addLabel()"></dx-button>
+  <dx-data-grid [dataSource]="labels">
+    <dxi-column caption="Nom" dataField="name" [sortIndex]="0" sortOrder="asc"></dxi-column>
+    <dxi-column caption="Actions" cellTemplate="actionTemplate"></dxi-column>
+
+    <div *dxTemplate="let d of 'actionTemplate'">
+      <a href="#" (click)="editLabel(d.data, $event)">Edit</a>
+    </div>
+
+    <dxo-paging [pageSize]="20"></dxo-paging>
+    <dxo-pager [showPageSizeSelector]="false" [showInfo]="true"></dxo-pager>
+  </dx-data-grid>
+  <dx-popup [visible]="formVisible" title="Étiquette" width="350px" height="auto" (onHidden)="onFormHidden()">
+    <form (submit)="saveLabel($event)">
+      <dx-form [(formData)]="selectedLabel">
+        <dxi-item dataField="name" [label]="{text: 'Nom'}"></dxi-item>
+      </dx-form>
+      <div>
+        <dx-button text="Enregistrer" type="default" [useSubmitBehavior]="true" ></dx-button>
+      </div>
+  </form>
+  </dx-popup>
+</div>

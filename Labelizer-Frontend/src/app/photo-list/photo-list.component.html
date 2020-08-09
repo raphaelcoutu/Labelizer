@@ -1,0 +1,16 @@
+<div class="container">
+  <h4>Photos</h4>
+  <dx-data-grid [dataSource]="photos">
+    <dxi-column caption="Aperçu" cellTemplate="previewTemplate"></dxi-column>
+    <dxi-column dataField="filename" caption="Nom" [sortIndex]="0" sortOrder="asc"></dxi-column>
+    <dxi-column dataField="verified" caption="Vérifié"></dxi-column>
+    <dxi-column dataField="createdAt" caption="Créé" dataType="datetime" format="yyyy-MM-dd HH:mm"></dxi-column>
+
+    <div *dxTemplate="let d of 'previewTemplate'">
+      <a [routerLink]="['/labelizer', d.data.id]"><img [src]="backendUrl + '/files/' + d.data.filename + '_thumb.jpg'"></a>
+    </div>
+
+    <dxo-paging [pageSize]="20"></dxo-paging>
+    <dxo-pager [showPageSizeSelector]="false" [showInfo]="true"></dxo-pager>
+  </dx-data-grid>
+</div>
