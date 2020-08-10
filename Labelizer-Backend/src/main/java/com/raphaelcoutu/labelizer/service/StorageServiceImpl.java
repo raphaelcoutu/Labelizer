@@ -2,15 +2,15 @@ package com.raphaelcoutu.labelizer.service;
 
 import net.coobird.thumbnailator.Thumbnails;
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -22,6 +22,8 @@ public class StorageServiceImpl implements StorageService {
 
     private final Path root = Paths.get("uploads");
 
+    private final Logger logger = LoggerFactory.getLogger(StorageServiceImpl.class);
+
     @Override
     public void init() {
         try {
@@ -29,7 +31,7 @@ public class StorageServiceImpl implements StorageService {
                 Files.createDirectory(root);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Could not initialize folder for upload!");
+            logger.error("Could not initialize folder for upload! Error: " + e.getMessage(), e);
         }
     }
 
@@ -43,7 +45,7 @@ public class StorageServiceImpl implements StorageService {
                     .outputQuality(1)
                     .toFile("uploads/" + filename + "_thumb");
         } catch (Exception e) {
-            throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
+            logger.error("Could not store the file. Error: " + e.getMessage(), e);
         }
     }
 
@@ -56,10 +58,12 @@ public class StorageServiceImpl implements StorageService {
             if (resource.exists() || resource.isReadable()) {
                 return resource;
             } else {
-                throw new RuntimeException("Could not read the file!");
+                logger.error("Could not read the file!");
+                throw new RuntimeException("Error.");
             }
         } catch (MalformedURLException e) {
-            throw new RuntimeException("Error: " + e.getMessage());
+            logger.error("Error: " + e.getMessage(), e);
+            throw new RuntimeException("Error.");
         }
     }
 
@@ -78,6 +82,7 @@ public class StorageServiceImpl implements StorageService {
         try {
             return Files.walk(this.root, 1).filter(path -> !path.equals(this.root)).map(this.root::relativize);
         } catch (IOException e) {
+            logger.error("Could not load the files!");
             throw new RuntimeException("Could not load the files!");
         }
     }
