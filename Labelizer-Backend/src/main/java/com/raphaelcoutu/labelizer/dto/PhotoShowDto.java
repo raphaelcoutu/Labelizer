@@ -15,6 +15,8 @@ public class PhotoShowDto {
     private String extension;
     private String originalFilename;
     private String originalExtension;
+    private Integer width;
+    private Integer height;
     private Boolean verified;
     private LocalDateTime createdAt;
     private DatasetListDto dataset;
