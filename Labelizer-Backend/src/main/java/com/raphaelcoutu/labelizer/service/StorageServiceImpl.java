@@ -36,16 +36,12 @@ public class StorageServiceImpl implements StorageService {
     @Override
     public void save(MultipartFile file, String filename, String extension) {
         try {
-            InputStream fileInputStream = file.getInputStream();
-
-            Files.copy(fileInputStream, this.root.resolve(filename + "." + extension));
-            Thumbnails.of(fileInputStream)
+            Files.copy(file.getInputStream(), this.root.resolve(filename + "." + extension));
+            Thumbnails.of(file.getInputStream())
                     .size(192, 108)
                     .outputFormat("jpg")
                     .outputQuality(1)
                     .toFile("uploads/" + filename + "_thumb");
-
-            fileInputStream.close();
         } catch (Exception e) {
             throw new RuntimeException("Could not store the file. Error: " + e.getMessage());
         }
