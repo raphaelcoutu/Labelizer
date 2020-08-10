@@ -8,6 +8,8 @@ export class Photo {
   extension: string;
   originalFilename: string;
   originalExtension: string;
+  width: number;
+  height: number;
   verified: boolean;
   labelBoxes?: LabelBox[];
   createdAt: Date;
