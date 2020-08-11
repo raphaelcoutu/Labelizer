@@ -12,6 +12,7 @@ import { environment } from 'src/environments/environment';
 import { concatMap } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { confirm } from 'devextreme/ui/dialog';
+import orderBy from 'lodash/orderBy';
 
 @Component({
   selector: 'app-labelizer',
@@ -86,10 +87,12 @@ export class LabelizerComponent implements OnInit {
         return of(photo);
       }),
       concatMap((photo: Photo) => {
-        this.labelService.getAllForDataset(photo.dataset.id).subscribe((labels: Label[]) => {
-          this.labels = labels;
-          this.selectedLabel = this.labels[0];
-        })
+        if (!this.labels) {
+          this.labelService.getAllForDataset(photo.dataset.id).subscribe((labels: Label[]) => {
+            this.labels = orderBy(labels, ['name']);
+            this.selectedLabel = this.labels[0];
+          })
+        }
         return this.photoService.getNextUnverifiedExcept(photo.dataset.id, photo.id)
       })
     ).subscribe(nextPhoto => this.nextPhoto = nextPhoto)
